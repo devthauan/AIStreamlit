@@ -1,0 +1,46 @@
+{
+    "EquipmentName": "P1221",
+    "EquipmentCode": "EQ_10071386",
+    "ApplicationCode": "NRG",
+    "SiteCode": "CLK",
+    "Aggregates": [
+        "average"
+    ],
+    "Granularity": "1m",
+    "ExecutableClass": "IncidentProbabilityScore",
+    "tzinfo": "America/Chicago",
+    "InputTags": [
+        {
+            "ExternalId": "CL-UTL:pi03667.pv",
+            "Alias": "pressure(psig)"
+        },
+        {
+            "ExternalId": "CL-UTL:SI03673.PV",
+            "Alias": "bfw_turbine_speed(rpm)"
+        },
+        {
+            "ExternalId": "CL-UTL:FI03660.PV",
+            "Alias": "bfw_pump_flow(gpm)"
+        }
+    ],
+    "OutputTags_b": [
+        {
+            "ExternalId": "NRG:CLK:FuelGas:EQ_10071386:IncidentPredictionProbability",
+            "KPICode": "P1221 Incident Prediction Probability",
+            "Label": "",
+            "Description": "Indicates the score of the anomaly for MB0120, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
+            "ClassAttribute": "",
+            "Unit": "%"
+        }
+    ],
+    "OutputTags": [
+        {
+            "ExternalId": "CLK:NRG:EQ_10534740:IncidentPredictionProbabilityEQ_10071386:Visualization",
+            "KPICode": "MB0120 Incident Prediction Probability",
+            "Label": "",
+            "Description": "Indicates the score of the anomaly for MB0120, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
+            "ClassAttribute": "",
+            "Unit": "%"
+        }
+    ]
+}
