@@ -12,57 +12,93 @@
     "InputTags": [
         {
             "ExternalId": "CL-UTL:pi03667.pv",
-            "Alias": "pressure(psig)"
+            "Name": "pressure(psig)",
+            "Display": "Pressure",
+            "Unit": "psig"
         },
         {
             "ExternalId": "CL-UTL:SI03673.PV",
-            "Alias": "bfw_turbine_speed(rpm)"
+            "Name": "bfw_turbine_speed(rpm)",
+            "Display": "Speed",
+            "Unit": "rpm"
         },
         {
             "ExternalId": "CL-UTL:FI03660.PV",
-            "Alias": "bfw_pump_flow(gpm)"
+            "Name": "bfw_pump_flow(gpm)",
+            "Display": "Flow",
+            "Unit": "gpm"
         }
     ],
     "OutputTags": [
         {
+            "ExternalId": "NRG:CLK:FuelGas:EQ_10071386:IncidentPredictionProbability",
+            "Name": "P1221 Incident Prediction Probability",
+            "Label": "",
+            "Description": "Indicates the score of the anomaly for pump P 1221, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
+            "ClassAttribute": "",
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
+        },
+        {
             "ExternalId": "CLK:NRG:EQ_10534740:IncidentPredictionProbabilityEQ_10071386:Visualization",
-            "KPICode": "MB0120 Incident Prediction Probability",
+            "Name": "MB0120 Incident Prediction Probability",
             "Label": "",
             "Description": "Indicates the score of the anomaly for MB0120, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
             "ClassAttribute": "",
-            "Unit": "%"
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
         },
         {
             "ExternalId": "CLK:NRG:EQ_10534741:IncidentPredictionProbabilityEQ_10071386:Visualization",
-            "KPICode": "MB0130 Incident Prediction Probability",
+            "Name": "MB0130 Incident Prediction Probability",
             "Label": "",
             "Description": "Indicates the score of the anomaly for MB0130, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
             "ClassAttribute": "",
-            "Unit": "%"
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
         },
         {
             "ExternalId": "CLK:NRG:EQ_10534742:IncidentPredictionProbabilityEQ_10071386:Visualization",
-            "KPICode": "MB0140 Incident Prediction Probability",
+            "Name": "MB0140 Incident Prediction Probability",
             "Label": "",
             "Description": "Indicates the score of the anomaly for MB0140, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
             "ClassAttribute": "",
-            "Unit": "%"
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
         },
         {
             "ExternalId": "CLK:NRG:EQ_10534743:IncidentPredictionProbabilityEQ_10071386:Visualization",
-            "KPICode": "MB0150 Incident Prediction Probability",
+            "Name": "MB0150 Incident Prediction Probability",
             "Label": "",
             "Description": "Indicates the score of the anomaly for MB0150, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
             "ClassAttribute": "",
-            "Unit": "%"
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
         },
         {
             "ExternalId": "CLK:NRG:EQ_10525027:IncidentPredictionProbabilityEQ_10071386:Visualization",
-            "KPICode": "MB6 Incident Prediction Probability",
+            "Name": "MB6 Incident Prediction Probability",
             "Label": "",
             "Description": "Indicates the score of the anomaly for MB6, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
             "ClassAttribute": "",
-            "Unit": "%"
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
+        },
+        {
+            "ExternalId": "CLK:NRG:EQ_10562559:IncidentPredictionProbabilityEQ_10071386:Visualization",
+            "Name": "MB7 Incident Prediction Probability",
+            "Label": "",
+            "Description": "Indicates the score of the anomaly for MB7, where there score of 0% represents a low chance to fail and 100% represents a very high chance to fail.",
+            "ClassAttribute": "",
+            "Unit": "%",
+            "DatasetID_PROD": "2390801079406030",
+            "DatasetID_DEV": "5140341703636106"
         }
     ]
 }

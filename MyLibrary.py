@@ -1,10 +1,13 @@
 import streamlit as st
 import time
 import numpy as np
+import pandas as pd 
 from typing import Dict
 import json, urllib
 import os
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+import plotly.express as px
 
 class AIMVP:
     def __init__(self, url: str, api_key: str):
@@ -61,3 +64,59 @@ def plot_costs(results_df):
     plt.xticks(rotation=15)
     plt.legend()
     return figure
+
+def plot_costs_plotly(results_df):
+
+    results_df = results_df.sort_values(by="Date")
+
+    plot_layout = dict( margin=dict(l=48, r=48, t=16, b=32),
+                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(0, 0, 0, 0)"),    
+                        plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                        paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                        font_family="DIN Alternate",    
+                        showlegend=True,    
+                        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),)
+        
+    # Create traces
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x = results_df["Date"], y=results_df["ActualCost"],
+                        mode='lines+markers',
+                        name='Actual Cost'))
+    fig.add_trace(go.Scatter( x=results_df["Date"], y=results_df["OptimizedPredCost"],
+                        mode='lines+markers',
+                        name='Model Optimized Cost'))
+    # Edit the layout
+    fig.update_layout(title='Actual Cost x Model Optimized Cost',
+                   xaxis_title='Cost ($)',
+                   yaxis_title='Date')
+    fig.update_layout(**plot_layout)
+
+    return fig
+
+def plot_reduction_plotly(results_df, change="Cost", unit="%", pad_max=10, pad_min=3):
+    
+    plot_layout = dict( margin=dict(l=48, r=48, t=16, b=32),
+                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(0, 0, 0, 0)"),    
+                        plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                        paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                        font_family="DIN Alternate",    
+                        showlegend=True,    
+                        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),)
+
+    results_df["Date"] = pd.to_datetime(results_df["Date"], format='%Y-%m-%d')
+    results_df = results_df.set_index("Date")
+    
+    results_df["Feasibility"] = ""
+    results_df.loc[results_df['Status'] == 1, 'Feasibility'] = "feasible" 
+    results_df.loc[results_df['Status'] != 1, 'Feasibility'] = "unfeasible"
+    fig = px.bar(results_df, x=results_df.index, y=results_df[f"Change{change}"], color=results_df['Feasibility'],
+                 color_discrete_map={   'feasible' : 'orange',
+                                        'unfeasible' : 'red'})
+    
+    # Edit the layout
+    fig.update_layout(title=f"{unit} {change} reduction by Optimization model per month",
+                   xaxis_title='Date',
+                   yaxis_title=f"{change} reduction ({unit})")
+    fig.update_layout(**plot_layout)
+    
+    return fig
