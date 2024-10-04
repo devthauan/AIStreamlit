@@ -120,3 +120,54 @@ def plot_reduction_plotly(results_df, change="Cost", unit="%", pad_max=10, pad_m
     fig.update_layout(**plot_layout)
     
     return fig
+
+def plot_allocation_plotly(df_pred, month, setup_time=0.08):
+    pred = df_pred
+    periods = {1: 31, 2:28, 3:31, 4:30, 5:31, 6:30, 7:31, 8:31, 9:30, 10:31, 11:30, 12:31}
+    pred = pred[pred["RunTimeHrs"] > 0]
+
+    # Add setup
+    setups = []
+    for row in pred.itertuples():    
+        setups.append({ "Material": f"{row.Material} Setup",
+                        "Line": row.Line,
+                        "RunTimeHrs": setup_time })    
+    pred2 = pd.concat([pred, pd.DataFrame(setups)])
+    # Add slack
+    slack = pred2.groupby("Line", as_index=False).agg({"RunTimeHrs": "sum"})
+    slack['RunTimeHrs'] = (periods[month] * 24 - slack['RunTimeHrs']).round(2).apply(lambda x:x if abs(x) > 0.01 else 0)
+    slack['Material'] = "Slack"
+    # Convert material to str and sort names
+    pred2 = pred2.astype({"Material": str})
+    pred2 = pred2.sort_values(by=["Material", "Line"], ascending=False)
+    # Concat pred data to slack
+    pred2 = pd.concat([pred2, slack])
+
+    plot_layout = dict( margin=dict(l=48, r=48, t=48, b=48),
+                    xaxis=dict(showgrid=True, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),    
+                    plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                    paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                    font_family="DIN Alternate",    
+                    showlegend=True,    
+                    )
+
+    fig = px.bar(pred2.astype({"Material": str}), y="Line", x="RunTimeHrs", 
+                color="Material", text="Material", height=600)
+
+    fig.update_traces(textposition='inside')
+    fig.update_layout(uniformtext_minsize=10, 
+                    uniformtext_mode='hide',
+                    title="Optimized Allocation",
+                    xaxis_title="Time",
+                    yaxis_title="Line",
+                    )
+
+    fig.update_layout(**plot_layout)
+
+    for trace in fig.data:
+    # Set layer color as gray when the time spent is due to setup or slack
+        if "Setup" in trace.name or "Slack" in trace.name:
+            trace.marker.color = 'gray'
+            trace.showlegend = False
+
+    return fig
