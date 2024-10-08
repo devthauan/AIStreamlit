@@ -68,7 +68,7 @@ with st.container():
         update_graphic_info_text(graphic_timespent_reduction_info)
         update_graphic_figure(figure)
     
-    st.plotly_chart(st.session_state.graphic_figure)       
+    st.plotly_chart(st.session_state.graphic_figure, theme=None)       
     button_info = st.button("Chart Analysis") 
     if(button_info):
         # Display the modified text
@@ -116,4 +116,4 @@ with st.container():
         month=int(target_date[5:7])
         setup_time = 0.08
         figure = plot_allocation_plotly(df_pred=df_answer, month=month, setup_time=setup_time)
-        st.plotly_chart(figure)
+        st.plotly_chart(figure, theme= None)

@@ -70,10 +70,11 @@ def plot_costs_plotly(results_df):
     results_df = results_df.sort_values(by="Date")
 
     plot_layout = dict( margin=dict(l=48, r=48, t=16, b=32),
-                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(0, 0, 0, 0)"),    
-                        plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
-                        paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
-                        font_family="DIN Alternate",    
+                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
+                        yaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
+                        # plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                        # paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                        # font_family="DIN Alternate",    
                         showlegend=True,    
                         legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),)
         
@@ -96,10 +97,11 @@ def plot_costs_plotly(results_df):
 def plot_reduction_plotly(results_df, change="Cost", unit="%", pad_max=10, pad_min=3):
     
     plot_layout = dict( margin=dict(l=48, r=48, t=16, b=32),
-                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(0, 0, 0, 0)"),    
-                        plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
-                        paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
-                        font_family="DIN Alternate",    
+                        xaxis=dict(showgrid=True, zeroline=True,gridcolor="rgba(255, 255, 255, .6)"),  
+                        yaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
+                        # plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                        # paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                        # font_family="DIN Alternate",    
                         showlegend=True,    
                         legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),)
 
@@ -144,10 +146,11 @@ def plot_allocation_plotly(df_pred, month, setup_time=0.08):
     pred2 = pd.concat([pred2, slack])
 
     plot_layout = dict( margin=dict(l=48, r=48, t=48, b=48),
-                    xaxis=dict(showgrid=True, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),    
-                    plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
-                    paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
-                    font_family="DIN Alternate",    
+                    xaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),   
+                    yaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),   
+                    # plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                    # paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                    # font_family="DIN Alternate",    
                     showlegend=True,    
                     )
 
