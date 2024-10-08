@@ -75,15 +75,14 @@ df_tested_data.index = pd.to_datetime(df_tested_data.index)
 st.sidebar.header("Date Interval")
 
 tzinfo = pytz.utc
-date_now = datetime.now(tzinfo)
-
+date_now = df_tested_data.index.max()
 # Selecionar o intervalo de datas
 start_date = st.sidebar.date_input("Start Date", value=date_now - timedelta(days = 7))
 
 end_date = st.sidebar.date_input("End Date", value=date_now)
 
 # Selecionar a hora e minuto para o tempo final
-end_time = st.sidebar.time_input("Select End Time (related to end date)", value=pd.to_datetime("2022-08-29 23:59:00").time())
+end_time = st.sidebar.time_input("Select End Time (related to end date)", value=pd.to_datetime("2022-08-29 00:00:00").time())
 
 # Criar o datetime final combinando a data final com a hora e minuto selecionados
 end_datetime = pd.to_datetime(f"{end_date} {end_time}")
