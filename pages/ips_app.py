@@ -37,7 +37,7 @@ st.title("Anomaly Probability Score Dashboard")
 from extracting_process_timeseries import ExtractProcessTimeseries
 from miscellaneous import merge_to_streamlit
 
-@st.cache_data
+@st.cache_data(ttl = '5min')
 def get_data_from_cognite(env):
     ips_path = 'probability_score.json'
 
@@ -82,7 +82,7 @@ start_date = st.sidebar.date_input("Start Date", value=date_now - timedelta(days
 end_date = st.sidebar.date_input("End Date", value=date_now)
 
 # Selecionar a hora e minuto para o tempo final
-end_time = st.sidebar.time_input("Select End Time (related to end date)", value=pd.to_datetime("2022-08-29 00:00:00").time())
+end_time = st.sidebar.time_input("Select End Time (related to end date)", value=date_now.time())
 
 # Criar o datetime final combinando a data final com a hora e minuto selecionados
 end_datetime = pd.to_datetime(f"{end_date} {end_time}")
