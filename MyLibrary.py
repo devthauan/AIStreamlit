@@ -44,7 +44,7 @@ class RootCauseAnalysis(AIMVP):
 
 class ProductionConversionCosts(AIMVP):
     def __init__(self):
-        super().__init__('https://pcc-endpoint.eastus.inference.ml.azure.com/score', st.secrets["PCC_API_KEY"])
+        super().__init__('https://production-conversion-cost.eastus.inference.ml.azure.com/score', st.secrets["PCC_API_KEY"])
 
     def prepare_payload(self, data) -> Dict:
         return str.encode(data)
