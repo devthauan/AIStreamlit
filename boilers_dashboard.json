@@ -1,0 +1,66 @@
+{
+     "EquipmentCode": "",
+    "ApplicationCode": "NRG",
+    "SiteCode": "CLK",
+    "Aggregates": [
+        "average"
+    ],
+    "Granularity": "1m",
+    "ExecutableClass": "IncidentProbabilityScore",
+    "tzinfo": "America/Chicago",
+    "InputTags": [
+        {
+            "ExternalId": "NRG:CLK:EQ_10534740:FirstEfficiency:Visualization",
+             "Name" : "MB120_Efficiency",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "NRG:CLK:EQ_10534741:FirstEfficiency:Visualization",
+             "Name" : "MB130_Efficiency",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "NRG:CLK:EQ_10534742:FirstEfficiency:Visualization",
+             "Name" : "MB140_Efficiency",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "NRG:CLK:EQ_10534743:FirstEfficiency:Visualization",
+             "Name" : "MB150_Efficiency",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "NRG:CLK:EQ_10525027:FirstEfficiency:Visualization",
+             "Name" : "MB6_Efficiency",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "CLK:NRG:EQ_10534740:IncidentPredictionProbabilityEQ_10071386:Visualization",
+             "Name" : "Anomaly_MB120",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "CLK:NRG:EQ_10534741:IncidentPredictionProbabilityEQ_10071386:Visualization",
+             "Name" : "Anomaly_MB130",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "CLK:NRG:EQ_10534742:IncidentPredictionProbabilityEQ_10071386:Visualization",
+             "Name" : "Anomaly_MB140",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "CLK:NRG:EQ_10534743:IncidentPredictionProbabilityEQ_10071386:Visualization",
+             "Name" : "Anomaly_MB150",
+            "Unit" : "%"
+        },
+        {
+            "ExternalId": "CLK:NRG:EQ_10525027:IncidentPredictionProbabilityEQ_10071386:Visualization",
+             "Name" : "Anomaly_MB6",
+            "Unit" : "%"
+        }
+    ],
+    "OutputTags": [
+        
+    ]
+}

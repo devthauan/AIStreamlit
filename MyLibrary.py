@@ -53,6 +53,17 @@ class ProductionConversionCosts(AIMVP):
         return data.decode('utf-8')
 
 
+class ProductionCostEstimator(AIMVP):
+    def __init__(self):
+        super().__init__('https://pce-endpoint.eastus.inference.ml.azure.com/score', st.secrets["PCE_API_KEY"])
+
+    def prepare_payload(self, data) -> Dict:
+        return str.encode(data)
+
+    def prepare_output(self, data):
+        return data.decode('utf-8')
+
+
 def plot_costs(results_df):
     figure = plt.figure(figsize=(15, 6))
     results_df = results_df.sort_values("Date")
@@ -174,3 +185,127 @@ def plot_allocation_plotly(df_pred, month, setup_time=0.08):
             trace.showlegend = False
 
     return fig
+
+def plot_cost_by_line_material(df_pred):
+    # Criar uma coluna combinando Line e Material
+    df_pred['Machine_Material'] = df_pred['Machine'].astype(str) + '__' + df_pred['Material'].astype(str)
+    df_pred = df_pred[['Machine_Material', 'CostCalculated']].groupby('Machine_Material').sum().reset_index()
+    # Layout padrão
+    plot_layout = dict(
+        margin=dict(l=48, r=48, t=48, b=150),
+        xaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),   
+        yaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),
+        showlegend=False,  # Desativar legenda neste caso, mas pode ser reativada se necessário
+    )
+
+    # Criar o gráfico de barras com Plotly Express
+    fig = px.bar(
+        df_pred, 
+        x="Machine_Material", 
+        y="CostCalculated", 
+        text="CostCalculated", 
+        height=600
+    )
+
+    # Ajustar o layout do gráfico
+    fig.update_traces(textposition='inside')
+    fig.update_layout(
+        uniformtext_minsize=10, 
+        uniformtext_mode='hide',
+        title="Cost by Machine and Material",
+        xaxis_title="Machine/Material",
+        yaxis_title="Calculated Costs",
+        **plot_layout
+    )
+
+    # Rotacionar os labels do eixo X
+    fig.update_xaxes(tickangle=45)
+
+    return fig
+
+
+def plot_cost_by_material(df_pred):
+    df_pred['Material'] = df_pred['Material'].astype(str) + '_'
+    df_pred = df_pred[['Material', 'CostCalculated']].groupby('Material').sum().reset_index()
+    df_pred['CostCalculated'] = np.round(df_pred['CostCalculated'], 2)
+    # Layout padrão
+    plot_layout = dict(
+        margin=dict(l=48, r=48, t=48, b=150),
+        xaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),   
+        yaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),
+        showlegend=False,  # Desativar legenda neste caso, mas pode ser reativada se necessário
+    )
+
+    # Criar o gráfico de barras com Plotly Express
+    fig = px.bar(
+        df_pred, 
+        x="Material", 
+        y="CostCalculated", 
+        text="CostCalculated", 
+        height=600
+    )
+
+    # Ajustar o layout do gráfico
+    fig.update_traces(textposition='inside')
+    fig.update_layout(
+        uniformtext_minsize=10, 
+        uniformtext_mode='hide',
+        title="Cost by Material",
+        xaxis_title="Material",
+        yaxis_title="Calculated Costs",
+        **plot_layout
+    )
+
+    # Rotacionar os labels do eixo X
+    fig.update_xaxes(tickangle=45)
+
+    return fig
+
+def plot_cost_by_machine(df_pred):
+    df_pred = df_pred[['Machine', 'CostCalculated']].groupby('Machine').sum().reset_index()
+    df_pred['CostCalculated'] = np.round(df_pred['CostCalculated'], 2)
+    # Layout padrão
+    plot_layout = dict(
+        margin=dict(l=48, r=48, t=48, b=150),
+        xaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),   
+        yaxis=dict(showgrid=False, zeroline=False, gridcolor="rgba(0, 0, 0, 0)"),
+        showlegend=False,  # Desativar legenda neste caso, mas pode ser reativada se necessário
+    )
+
+    # Criar o gráfico de barras com Plotly Express
+    fig = px.bar(
+        df_pred, 
+        x="Machine", 
+        y="CostCalculated", 
+        text="CostCalculated", 
+        height=600
+    )
+
+    # Ajustar o layout do gráfico
+    fig.update_traces(textposition='inside')
+    fig.update_layout(
+        uniformtext_minsize=10, 
+        uniformtext_mode='hide',
+        title="Cost by Machine",
+        xaxis_title="Machine",
+        yaxis_title="Calculated Costs",
+        **plot_layout
+    )
+
+    # Rotacionar os labels do eixo X
+    fig.update_xaxes(tickangle=45)
+
+    return fig
+
+
+
+
+def format_large_number(value):
+    if abs(value) >= 1_000_000_000:
+        return f"{value / 1_000_000_000:.2f}B"
+    elif abs(value) >= 1_000_000:
+        return f"{value / 1_000_000:.2f}M"
+    elif abs(value) >= 1_000:
+        return f"{value / 1_000:.2f}K"
+    else:
+        return str(value)

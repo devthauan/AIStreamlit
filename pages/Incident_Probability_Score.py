@@ -82,13 +82,13 @@ start_date = st.sidebar.date_input("Start Date", value=date_now - timedelta(days
 end_date = st.sidebar.date_input("End Date", value=date_now)
 
 # Selecionar a hora e minuto para o tempo final
-end_time = st.sidebar.time_input("Select End Time (related to end date)", value=date_now.time())
+end_time = st.sidebar.time_input("Select the End Time (related to end date)", value=date_now.time())
 
 # Criar o datetime final combinando a data final com a hora e minuto selecionados
 end_datetime = pd.to_datetime(f"{end_date} {end_time}")
 
 # Definir um intervalo de tempo que o usuário deseja visualizar (em minutos)
-time_window_minutes = st.sidebar.slider("Select Time Window (in minutes)", 0, 1440, 60)  # Máximo de 24 horas
+time_window_minutes = st.sidebar.slider("Select the Time Window (in minutes)", 0, 1440, 60)  # Máximo de 24 horas
 
 # Calcular o start_datetime baseado no intervalo de tempo escolhido
 start_datetime = end_datetime - pd.Timedelta(minutes=time_window_minutes)
@@ -98,7 +98,7 @@ filtered_data = df_tested_data[start_datetime:end_datetime]
 
 # filtered_data = df_tested_data.loc[start_date:end_date]
 if len(filtered_data)==0:
-    st.warning("there are no data on this time period!")
+    st.warning("There are no data on this time period!")
 
 # Calcular e exibir as métricas de anomalia para o intervalo selecionado
 anomaly_stats = anomaly_metrics(df_tested_data, start_time=start_datetime, end_time=end_datetime)

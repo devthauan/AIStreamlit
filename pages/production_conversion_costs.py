@@ -3,9 +3,10 @@ import re
 import pandas as pd
 import json
 import urllib.request
-from MyLibrary import ProductionConversionCosts
+from MyLibrary import ProductionConversionCosts, ProductionCostEstimator
 import ast
-from MyLibrary import plot_costs, plot_costs_plotly, plot_reduction_plotly, plot_allocation_plotly
+from MyLibrary import plot_costs, plot_costs_plotly, plot_reduction_plotly, plot_allocation_plotly, plot_cost_by_line_material,format_large_number, plot_cost_by_material, plot_cost_by_machine
+import numpy as np
 
 def update_graphic_figure(figure):
     st.session_state.graphic_figure = figure
@@ -105,15 +106,47 @@ with st.container():
             input_data = json.dumps({"data": json.loads(data.to_json()), "target_date": target_date})
             api = ProductionConversionCosts()
             answer = api.call(input_data)
-    
     if(answer):
         json_answer = json.loads(answer)
         df_answer = pd.DataFrame.from_dict(ast.literal_eval(json_answer))
         df_answer = df_answer[df_answer["RunTimeHrs"] != 0]
         df_answer.reset_index(inplace = True)
-        st.dataframe(df_answer) 
+ 
+        st.dataframe(df_answer)
         target_date = uploaded_file.name.split("_")[0]
         month=int(target_date[5:7])
         setup_time = 0.08
         figure = plot_allocation_plotly(df_pred=df_answer, month=month, setup_time=setup_time)
         st.plotly_chart(figure, theme= None)
+        
+        st.header("Production Costs", divider=True)
+        api = ProductionCostEstimator()
+        
+        answer_estimator = api.call(json.dumps(json.loads(df_answer.to_json())) )
+        answer_estimator = json.loads(json.loads(answer_estimator))['result']
+        df_result = pd.DataFrame(answer_estimator)
+        
+        df_result['Material'] = df_result['Material'].astype(str).str.split('.').str[0]
+        df_result['Material'] = df_result['Material'].astype('str')
+
+        df_result['CostCalculated'] = df_result['planQuantityWeight'] * df_result['predictions']
+        df_result['CostCalculated'] = np.round(df_result['CostCalculated'],2)
+        total_cost = np.round(df_result['CostCalculated'].sum(), 2)
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            pass
+        with col2:
+            st.metric(label="Total Cost of Production", value=format_large_number(total_cost) + ' Lbs')
+        with col3:
+            pass
+        figure = plot_cost_by_line_material(df_result)
+        st.plotly_chart(figure, theme= None)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            figure = plot_cost_by_material(df_result) 
+            st.plotly_chart(figure, theme= None)
+        with col2:
+            figure = plot_cost_by_machine(df_result)
+            st.plotly_chart(figure, theme= None)
+        
