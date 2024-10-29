@@ -5,8 +5,24 @@ import json
 import urllib.request
 from MyLibrary import ProductionConversionCosts, ProductionCostEstimator
 import ast
-from MyLibrary import plot_costs, plot_costs_plotly, plot_reduction_plotly, plot_allocation_plotly, plot_cost_by_line_material,format_large_number, plot_cost_by_material, plot_cost_by_machine
+from MyLibrary import plot_costs, plot_costs_plotly, plot_reduction_plotly, plot_allocation_plotly, plot_cost_by_line_material,format_large_number, plot_cost_by_material, plot_cost_by_machine, plot_costs_plotly_from_table, plot_reduction_from_table
 import numpy as np
+
+from data_reader import read_sql
+
+st.set_page_config(
+    layout="wide",
+    page_icon=":bar_chart:",
+    page_title="Production Conversion Costs",
+    )
+
+sql = f"""
+        select *
+        from cdf_data_models("OPT-FLO-ALL-DAT", "ProductionConversionCostsOPT", "1_0_0", "ComparingAllocations") ca
+        """
+df_cognite = read_sql(sql, env='dev')
+results_df = df_cognite.groupby(['origin', 'referenceDate'], as_index=False).agg({"runtime": "sum", "benchmarkCost": "sum", "optimalSolution": "first"})
+
 
 def update_graphic_figure(figure):
     st.session_state.graphic_figure = figure
@@ -14,11 +30,6 @@ def update_graphic_figure(figure):
 def update_graphic_info_text(value):
     st.session_state.graphic_info_text = value
 
-st.set_page_config(
-    layout="wide",
-    page_icon=":bar_chart:",
-    page_title="Production Conversion Costs",
-    )
 
 st.title("Production Conversion Costs")
 
@@ -44,27 +55,27 @@ with st.container():
         st.session_state.graphic_info_text = graphic_graphic_atual_x_opt_cost_info
     # Initialize session state
     if 'graphic_figure' not in st.session_state:
-        results_df = pd.read_csv( 'kpis_results.csv')
-        figure = plot_costs_plotly(results_df)
+        # results_df = pd.read_csv( 'kpis_results.csv')
+        figure = plot_costs_plotly_from_table(results_df)
         st.session_state.graphic_figure = figure
 
     # Check if the button was clicked
     #if (button1 or st.session_state.get('button_clicked', False)) and (not(button2) and not(button3)):
     if (button_graphic_atual_x_opt_cost):
-        results_df = pd.read_csv( 'kpis_results.csv')
-        figure = plot_costs_plotly(results_df)
+        # results_df = pd.read_csv( 'kpis_results.csv')
+        figure = plot_costs_plotly_from_table(results_df)
         graphic_graphic_atual_x_opt_cost_info = "The plant has consistently operated at a higher cost than the optimized allocation. Over the 17-month period, the actual costs have exceeded the optimized costs by an average of 609,961 dollars per month, leading to a cumulative excess of 10.37 million dollars. This indicates that there is substantial room for cost reduction by aligning operations with the optimization model. The most significant deviation occurred in May 2024, where actual costs were $2.57 million higher than the optimized costs. This suggests a major inefficiency or operational issue during that month, with costs running 48% higher than the model's recommendations. On the positive side, there were two months where the plant operated below the optimized cost. October 2023 and January 2024 both showed cost savings, with January 2024 standing out as the most efficient month, where actual costs were 19% lower than predicted.The plant’s average efficiency ratio is 1.14, meaning actual costs have been about 14% higher than optimized costs on average. While some months, like June 2023 and October 2023, exhibited a favorable efficiency ratio, most months reflect inefficiency."
         update_graphic_info_text(graphic_graphic_atual_x_opt_cost_info)
         update_graphic_figure(figure)
     if button_graphic_cost_reduction:
-        results_df = pd.read_csv( 'kpis_results.csv')
-        figure = plot_reduction_plotly(results_df, change="Cost", unit="%", pad_max=10, pad_min=3)
+        # results_df = pd.read_csv( 'kpis_results.csv')
+        figure = plot_reduction_from_table(results_df, change="benchmarkCost", unit="%", pad_max=10, pad_min=3)
         graphic_cost_reduction_info = "The optimization model has consistently led to cost savings in 14 out of 17 months, with reductions ranging from 4.1% to 32.4%. The highest cost reduction occurred in May 2024, where the model demonstrated a 32.44% reduction in estimated costs compared to actual allocations. This is a significant indication of the model’s potential to drive efficiency and cost reduction when applied correctly.There are three months where the optimization model estimated a negative cost reduction (an increase), suggesting that the actual allocation was more cost-effective. The most prominent examples are in October 2023 and January 2024, where costs increased by 9.28% and 23.13%, respectively, when following the optimization model. This may indicate anomalies in the data or specific circumstances where the plant's actual allocation was more efficient than expected.Besides May 2024, other months of notable efficiency gains include August 2023 and September 2023, with cost reductions of 24.82% and 29.39%, respectively. These months suggest a strong alignment between the optimization model's recommendations and potential cost savings."
         update_graphic_info_text(graphic_cost_reduction_info)
         update_graphic_figure(figure)
     if button_graphic_timespent_reduction:
-        results_df = pd.read_csv( 'kpis_results.csv')
-        figure = plot_reduction_plotly(results_df, change="TimeSpent", unit="%", pad_max=10, pad_min=3)
+        # results_df = pd.read_csv( 'kpis_results.csv')
+        figure = plot_reduction_from_table(results_df, change="runtime", unit="%", pad_max=10, pad_min=3)
         graphic_timespent_reduction_info = "In 15 out of 17 months, the optimization model successfully reduced the time spent on production allocation, with reductions ranging from 2.99% to 40.05%. The largest time reduction occurred in April 2023, with a 40.05% decrease in time compared to the actual allocation, indicating that the optimization model greatly improved efficiency in time usage during that period.The model estimated negative reductions (increases in time) in two months: June 2023 and October 2023. The most significant time increase occurred in June 2023, where the time spent on production increased by 10.51% compared to the actual allocation. This suggests inefficiencies or model inaccuracies during these months, where the plant's actual allocation was more time-efficient than the optimized recommendation.From January 2024 to August 2024, the optimization model consistently provided time savings, with reductions ranging from 11.75% to 18.17%. This highlights a stable period of improvement, showing that the model consistently helped in reducing production time during this phase."
         update_graphic_info_text(graphic_timespent_reduction_info)
         update_graphic_figure(figure)

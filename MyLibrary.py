@@ -63,6 +63,14 @@ class ProductionCostEstimator(AIMVP):
     def prepare_output(self, data):
         return data.decode('utf-8')
 
+plot_layout = dict( margin=dict(l=48, r=48, t=16, b=32),
+                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
+                        yaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
+                        # plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
+                        # paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
+                        # font_family="DIN Alternate",    
+                        showlegend=True,    
+                        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),)
 
 def plot_costs(results_df):
     figure = plt.figure(figsize=(15, 6))
@@ -78,17 +86,7 @@ def plot_costs(results_df):
 
 def plot_costs_plotly(results_df):
 
-    results_df = results_df.sort_values(by="Date")
-
-    plot_layout = dict( margin=dict(l=48, r=48, t=16, b=32),
-                        xaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
-                        yaxis=dict(showgrid=True, zeroline=True, gridcolor="rgba(255, 255, 255, .6)"),  
-                        # plot_bgcolor="rgba(232, 232, 232, 1)",#plot_bgcolor="rgba(0, 0, 0, 0)",    
-                        # paper_bgcolor="rgba(232, 232, 232, 1)",  #paper_bgcolor="rgba(0,0,0,0)",    
-                        # font_family="DIN Alternate",    
-                        showlegend=True,    
-                        legend=dict(orientation="h", yanchor="bottom", y=1, xanchor="right", x=1),)
-        
+    results_df = results_df.sort_values(by="Date")        
     # Create traces
     fig = go.Figure()
     fig.add_trace(go.Scatter(x = results_df["Date"], y=results_df["ActualCost"],
@@ -309,3 +307,56 @@ def format_large_number(value):
         return f"{value / 1_000:.2f}K"
     else:
         return str(value)
+
+def plot_costs_plotly_from_table(results_df):
+        
+    # Create traces
+    fig = go.Figure()
+    results_df_real  = results_df[results_df["origin"] == 'Real']
+    results_df_model = results_df[results_df["origin"] == 'OPTModel']
+    fig.add_trace(go.Scatter(x = results_df_real["referenceDate"], y=results_df_real["benchmarkCost"],
+                        mode='lines+markers',
+                        name='Actual Cost'))
+    fig.add_trace(go.Scatter( x=results_df_model["referenceDate"], y=results_df_model["benchmarkCost"],
+                        mode='lines+markers',
+                        name='Model Optimized Cost'))
+    # Edit the layout
+    fig.update_layout(title='Real Cost x Model Optimized Cost',
+                   yaxis_title='Cost ($)',
+                   xaxis_title='Date')
+    fig.update_layout(**plot_layout)
+    
+    return fig
+
+def plot_reduction_from_table(df_results, change="benchmarkCost", unit="%", pad_max=10, pad_min=5):
+   
+    df_rows = []
+    for reference_date in df_results["referenceDate"].unique():
+        df_Model = df_results[(df_results['origin'] == 'OPTModel' ) & (df_results['referenceDate'] == reference_date)]
+        df_Real = df_results[(df_results['origin'] == 'Real' ) & (df_results['referenceDate'] == reference_date)]
+        referenceDate = reference_date  
+        ChangebenchmarkCost = 100*( 1 - (df_Model['benchmarkCost'].values[0]/df_Real['benchmarkCost'].values[0]) )
+        Changeruntime = 100* (1 - df_Model['runtime'].values[0]/df_Real['runtime'].values[0])
+        optimalSolution = df_Model['optimalSolution'].values[0]
+        df_rows.append((referenceDate, ChangebenchmarkCost, Changeruntime, optimalSolution))
+
+    df = pd.DataFrame(df_rows, columns=['referenceDate', 'ChangebenchmarkCost', 'Changeruntime', 'optimalSolution'])
+    df = df.set_index("referenceDate")    
+    df['feasibility'] = ""
+    df.loc[df.optimalSolution == 1,  'feasibility'] = "feasible"
+    df.loc[df.optimalSolution == 0,  'feasibility'] = "feasible"
+    df.loc[df.optimalSolution == -1, 'feasibility'] = "unfeasible"
+
+    fig = px.bar(df, x=df.index, y=f'Change{change}', 
+                 color='feasibility',  
+                 color_discrete_map={
+                        'feasible': 'green',
+                        'unfeasible': 'red'})
+    
+    # Edit the layout
+    fig.update_layout(title=f"{unit} {change} reduction by Optimization model per month",
+                   yaxis_title=f'{change} ({unit})',
+                   xaxis_title='Date')
+    fig.update_layout(**plot_layout)
+
+    return fig 
